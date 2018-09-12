@@ -12,17 +12,22 @@
 /*
     component: 基于iview扩展的可编辑表格，目前可编辑input和select组件
     author: Alan Chen
-    version: 0.0.1
-    lastDate: 2018/8/1
+    version: 0.0.2
+    lastDate: 2018/9/12
 
     使用说明：
         1. 必须搭载iveiw库使用
         2. props必须传data和columns。data和columns均为数组。可选height(高度),stripe(是否开启斑马纹),loading(加载状态),disableCreateMode(是否关闭createConfig事件)
             columns数组项可选值有 
-                title => 可选，表头的名称，默认为空字符串
-                key => 必选，对应data内的数据key
-                type => 可选，有input,select和icon三种,不填默认渲染为普通表格cell组件，不可编辑
-                selectInfo => 可选，当type为select时必选，select的数据，必须要有item和result两个值，item是个数组，数组项包含lable和value,result为select选中的值
+                title => 可选，String，表头的名称，默认为空字符串
+                key => 必选，String，对应data内的数据key
+                type => 可选，String，有input,select和icon三种,不填默认渲染为普通表格cell组件，不可编辑
+                selectInfo => 可选，Object，当type为select时必选，select的数据，必须要有item和result两个值，item是个数组，数组项包含lable和value,result为select选中的值
+                              下拉框的默认选中值先取result，如果没有result则自动从当前行数据中取对应的key。显示出来的总是label，而dataClone里绑定的是value
+                width => 可选，Number，单元格的宽度，除icon外，普通cell，可编辑input，可编辑select都会生效，默认自动宽度
+                placeholder => 可选，String，可编辑单元格的占位符。可编辑input默认为空字符串，可编辑select默认为'请选择'字符串
+                clearable => 可选，Boolean，是否开启可以点击删除的icon功能，只对可编辑input生效，默认为false
+
             **注意** 
                 组件默认会在最后一列渲染3个按钮，title为'操作'。如果不传入type为icon的数组项，默认值不会更改
                 当type为icon时，可选值有title，type， custom
@@ -121,18 +126,33 @@ export default {
             const type = col.type
             const custom = col.custom
             const selectInfo = col.selectInfo
+            // 组件中详细的配置项
+            const cellWidth = col.width
+            const cellPlaceholder = col.placeholder
+            const cellClearable = col.clearable // 仅对input有效
 
             let render
             // input的render类型
             if(type == 'input') {
                 render = (h, params) => {
-                const index = params.row._index
+                    const index = params.row._index
+                    const inputWidth = cellWidth
+                                      ?`width: ${cellWidth}px`
+                                      : '' 
+                    const inputPlaceholder = cellPlaceholder || ''
+                    const inputClearable = Boolean(cellClearable)
+                                         ? cellClearable
+                                         : false
+
                     return !this.dataClone[index].isCellEditable
-                            ? ( <p>{params.row[key]}</p> )
+                            ? ( <p style={{width: `${cellWidth}px`}}>{params.row[key]}</p> )
                             : ( 
                                 <Input 
                                     value={params.row[key]} 
                                     size="small" 
+                                    style={inputWidth}
+                                    placeholder={inputPlaceholder}
+                                    clearable={inputClearable}
                                     on-on-change={(e) => {this.dataClone[index][key]  = e.target.value.trim()}}
                                 />
                             )
@@ -141,21 +161,38 @@ export default {
             // select的render类型
             else if(type == 'select') {
                 render = (h, params) => {
+                    const selectWidth = cellWidth
+                                      ?`width: ${cellWidth}px`
+                                      : '' 
+                    const selectPlaceholder = cellPlaceholder || '请选择'
+                    /**
+                    * 在vuejs的render里写jsx，iview认定为非template和非render模式，所以Select和Option必须改成i-select和i-option 。
+                    * 否则当组件被调用时，cloumns被动态改变(例如改变selectInfo)，这两个组件会报错
+                    */
                     const index = params.row._index
-                    const options = selectInfo.item.map(a => 
-                        <Option key={a.value} value={a.value}>
+                    const optionItems = selectInfo.item || []
+                    const options = optionItems.map(a => 
+                        <i-option key={`${a.label}-${a.value}`} value={a.value}>
                             {a.label}
-                        </Option>
+                        </i-option>
                     )
                     
+                    // 下拉框默认选中的值先取组件传入的result，如果没有，则从源数据data找相应的key.最终显示出来的都是label，但是绑定存储的是value
+                    const selectResultValue = selectInfo.result || params.row[key]
+                    const selectResult = optionItems.find(a => a.value == selectResultValue)
+                    const selectResultLabel = (selectResult && selectResult.label) || selectResultValue
+
                     return !this.dataClone[index].isCellEditable
-                            ? ( <p>{params.row[key]}</p> )
+                            ? ( <p style={{width: `${cellWidth}px`}}>{selectResultLabel}</p> )
                             : (
-                                <Select 
-                                    value={params.row[key]}
-                                    on-on-change={val => {this.dataClone[index][key] = val;selectInfo.result = val}}>
+                                <i-select 
+                                    value={selectResultValue}
+                                    on-on-change={val => {this.dataClone[index][key] = val;selectInfo.result = val}}
+                                    style={selectWidth}
+                                    placeholder={selectPlaceholder}
+                                >
                                     {options}    
-                                </Select>
+                                </i-select>
                             )
                 }
             }
@@ -167,12 +204,14 @@ export default {
 
                 render = (h, params) => {
                     const index = params.row._index
+
                     const editHandler = () => {
                         if(this.dataClone[index].isCellEditable == false) {
                             this.initDataClone() //每次点击编辑，就让dataClone恢复到初始状态
                         }
                         this.dataClone[index].isCellEditable = true
                     }
+
                     const saveHandler = () => {
                         const {isCellEditable, isEmptyCell, ...rest} = this.dataClone[index]
                         //回调一个函数，来控制是否关闭编辑模式
@@ -187,10 +226,12 @@ export default {
                             this.$emit('updateConfig' , rest, params, done)
                         }
                     }
+
                     const delHandler = () => {
                         const {isCellEditable, isEmptyCell, ...rest} = this.dataClone[index]
                         this.$emit('deleteConfig', rest, params)
                     }
+                    
                     //icon的默认配置
                     const defaultIconConfig = {
                         'edit': {
@@ -229,7 +270,7 @@ export default {
             else {
                 render = (h, params) => {
                     return (
-                        <p>{params.row[key]}</p>
+                        <p style={{width: `${cellWidth}px`}}>{params.row[key]}</p>
                     )
                 }
             }

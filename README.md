@@ -4,7 +4,14 @@
 
 > version: 只兼容了iview2.x版本，不保证完全兼容3.x, 最好全局使用iview，`Vue.use(iview)`，因为封装的组件使用了大量iview基础组件
 
-> Date: 2018/09/10 
+> Date: 2018/09/12 
+
+# Update Logs
+* *2018/09/12* 
+    1. 解决了vuejs中jsx语法导致组件名称报错的问题，因为iview的`Select`和`Option`组件名称在非render或template模式下必须写成`i-select`和`i-option`。初步推测为，vuejs中jsx语法不能被完美解析为render函数，或者是说iview的bug。
+    2. EditTable组件的columns选项新增3个配置，`width`(宽度)，`placeholder`(input和select占位符)和`clearable`(input是否可一键删除)
+    3. 优化了EditTable组件渲染为select单元格默认选中值的逻辑，会优先取传入组件的result值，如果result不存在或者为空，则会从源数据data中匹配对应的key值
+
 
 ## FormModal
 > 封装了常用的Input、Select、Radio和Switch集成在Modal组件内。
@@ -180,14 +187,18 @@
             {
                 title, // 可选，表头的名称，默认为空字符串
                 key, // 必选，对应data内的数据key，用法与iview中Table组件一致
-                type // 可选，有input,select和icon三种,不填默认渲染为普通表格cell组件，不可编辑
+                type, // 可选，有input,select和icon三种,不填默认渲染为普通表格cell组件，不可编辑
+                width // 可选，Number，单元格的宽度
             }
 
             *** Input类型编辑列 ***            
             {
                 title, // 可选，表头的名称，默认为空字符串
                 key, // 必选，对应data内的数据key，用法与iview中Table组件一致
-                type: 'input'
+                type: 'input',
+                width, // 可选，Number，单元格的宽度
+                placeholder, // 可选，String，默认为空字符串
+                clearable // 可选，Boolean，是否可以一键删除输入的内容，默认为false
             }
 
             *** Select类型编辑列 ***            
@@ -195,7 +206,16 @@
                 title, // 可选，表头的名称，默认为空字符串
                 key, // 必选，对应data内的数据key，用法与iview中Table组件一致
                 type: 'select',
-                selectInfo // 可选，当type为select时必选，select的数据，必须要有item和result两个值，item是个数组，数组项包含lable和value,result为select选中的值
+                /***
+                 *  可选，当type为select时必选，select的数据，必须要有item和result两个值，item是个数组，数组项包含lable和value,result为select选中的值
+                 *  select选中值会先取result，如果没有result或者为空，则会从源数据data中匹配对应的key值。显示的总会是label，而缓存数据dataClone绑定的总会是value
+                 */
+                selectInfo: {
+                    item: [{ label, value }],
+                    result: ''
+                }, 
+                width, // 可选，Number，单元格的宽度
+                placeholder, // 可选，String，默认为'请选择'字符串
             }
 
             *** Icon类型编辑列 ***       
