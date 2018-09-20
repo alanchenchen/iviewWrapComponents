@@ -89,11 +89,13 @@
     }
 ```
 ### emit events
-* updateConfig 开启编辑模式后点击保存icon触发，返回3个参数rest,params和done。rest为修改后的当前行表单数据，params为table原始数据，done为一个函数，调用后关闭编辑模式
+* editConfig 点击修改icon触发触发，会开启编辑模式，返回1个参数params，params为table的当前行原始数据
+* updateConfig 开启编辑模式后点击保存icon触发，返回3个参数rest,params和done。rest为修改后的当前行表单数据，params为table的当前行原始数据，done为一个函数，调用后关闭编辑模式
 * createConfig 只有源数据data新建了一条空数据，开启编辑模式后点击保存icon才触发，返回参数与updateConfig一致
-* deleteConfig 点击删除icon触发，返回2个参数rest和params，为修改后的当前行表单数据，params为table原始数据
+* deleteConfig 点击删除icon触发，返回2个参数rest和params，rest为修改后的当前行表单数据，params为table的当前行原始数据
 
 ### Attention
 1. EditTable组件其实不会更改源数据data，而是深度拷贝了一个dataClone来进行所有的操作，dataClone会监听data改变来同步更新，这才是组件本身的意义
 2. 如果用户需要将对dataClone的操作映射到源数据data，只需要在保存后改变data即可，表格数据会同步更新
 3. 为了让组件逻辑更精简，所有emit事件返回的dataClone值一旦被开启编辑模式，则会重置。这样做更符合组件应用场景。避免了源数据data未更新而缓存了dataClone的情况
+4. 事件返回的dataClone，如果用户并未修改任何值，则对应编辑的值为空，源数据data不会改变，dataClone只会反映用户修改的值。

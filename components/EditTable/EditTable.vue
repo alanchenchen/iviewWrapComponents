@@ -12,8 +12,8 @@
 /*
     component: 基于iview扩展的可编辑表格，目前可编辑input和select组件
     author: Alan Chen
-    version: 0.0.2
-    lastDate: 2018/9/12
+    version: 0.0.3
+    lastDate: 2018/9/19
 
     使用说明：
         1. 必须搭载iveiw库使用
@@ -41,7 +41,8 @@
                         index: 数字 可选，仅当visible为false生效，表现为index对应的行数下的单元格隐藏icon，其余行数icon则不隐藏
                     ]
 
-        3. emit event有三个自定义事件
+        3. emit event有4个自定义事件
+            editConfig => 点击编辑的icon，开启编辑模式触发。返回一个参数params，为table原始数据。
             updateConfig => 开启编辑模式后点击保存icon触发，返回3个参数rest,params和done。rest为修改后的当前行表单数据，params为table原始数据，done为一个函数，调用后关闭编辑模式
             createConfig => 只有源数据data新建了一条空数据，开启编辑模式后点击保存icon才触发，返回参数与updateConfig一致
             deleteConfig => 点击删除icon触发，返回2个参数rest和params，为修改后的当前行表单数据，params为table原始数据
@@ -187,7 +188,7 @@ export default {
                             : (
                                 <i-select 
                                     value={selectResultValue}
-                                    on-on-change={val => {this.dataClone[index][key] = val;selectInfo.result = val}}
+                                    on-on-change={val => {this.dataClone[index][key] = val}}
                                     style={selectWidth}
                                     placeholder={selectPlaceholder}
                                 >
@@ -204,10 +205,11 @@ export default {
 
                 render = (h, params) => {
                     const index = params.row._index
-
+                    
                     const editHandler = () => {
                         if(this.dataClone[index].isCellEditable == false) {
                             this.initDataClone() //每次点击编辑，就让dataClone恢复到初始状态
+                            this.$emit('editConfig', params)
                         }
                         this.dataClone[index].isCellEditable = true
                     }
@@ -231,7 +233,7 @@ export default {
                         const {isCellEditable, isEmptyCell, ...rest} = this.dataClone[index]
                         this.$emit('deleteConfig', rest, params)
                     }
-                    
+
                     //icon的默认配置
                     const defaultIconConfig = {
                         'edit': {
