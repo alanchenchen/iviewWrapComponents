@@ -12,8 +12,8 @@
 /*
     component: 基于iview扩展的可编辑表格，目前可编辑input和select组件
     author: Alan Chen
-    version: 0.0.3
-    lastDate: 2018/9/19
+    version: 0.0.4
+    lastDate: 2018/9/28
 
     使用说明：
         1. 必须搭载iveiw库使用
@@ -22,11 +22,13 @@
                 title => 可选，String，表头的名称，默认为空字符串
                 key => 必选，String，对应data内的数据key
                 type => 可选，String，有input,select和icon三种,不填默认渲染为普通表格cell组件，不可编辑
-                selectInfo => 可选，Object，当type为select时必选，select的数据，必须要有item和result两个值，item是个数组，数组项包含lable和value,result为select选中的值
-                              下拉框的默认选中值先取result，如果没有result则自动从当前行数据中取对应的key。显示出来的总是label，而dataClone里绑定的是value
+                selectInfo => 可选，Object，当type为select时必选，select的数据，必须要有item，item是个数组，数组项包含lable和value,
+                              可选default，为select默认选中的值。可选bindValue。为select实时绑定的值，用于父组件外部监听
+                              下拉框的默认选中值先取default，如果没有default则自动从当前行数据中取对应的key。显示出来的总是label，而dataClone里绑定的是value
                 width => 可选，Number，单元格的宽度，除icon外，普通cell，可编辑input，可编辑select都会生效，默认自动宽度
                 placeholder => 可选，String，可编辑单元格的占位符。可编辑input默认为空字符串，可编辑select默认为'请选择'字符串
-                clearable => 可选，Boolean，是否开启可以点击删除的icon功能，只对可编辑input生效，默认为false
+                clearable => 可选，Boolean，是否开启可以点击删除的icon功能，可编辑input和select，默认为false
+                filterable => 可选，Boolean，是否开启select可以输入过滤功能，只对select生效，默认为false
 
             **注意** 
                 组件默认会在最后一列渲染3个按钮，title为'操作'。如果不传入type为icon的数组项，默认值不会更改
@@ -46,8 +48,10 @@
             updateConfig => 开启编辑模式后点击保存icon触发，返回3个参数rest,params和done。rest为修改后的当前行表单数据，params为table原始数据，done为一个函数，调用后关闭编辑模式
             createConfig => 只有源数据data新建了一条空数据，开启编辑模式后点击保存icon才触发，返回参数与updateConfig一致
             deleteConfig => 点击删除icon触发，返回2个参数rest和params，为修改后的当前行表单数据，params为table原始数据
-        4. 组件本身开启编辑模式，然后保存，并不会改变源数据，所以需要用户自己在保存后改变data即可，表格数据会同步更新
-        5. 为了让组件逻辑更精简，所有emit事件返回的dataClone值一旦被开启编辑模式，则会重置。这样做更符合组件应用场景。避免了源数据data未更新而缓存了dataClone的情况
+        4. methods
+                cleanDataCloneByKey(key, index = 'all') => 清空dataClone内缓存数据对应索引对应key的值，索引默认为all，清空所有项对应key值
+        5. 组件本身开启编辑模式，然后保存，并不会改变源数据，所以需要用户自己在保存后改变data即可，表格数据会同步更新
+        6. 为了让组件逻辑更精简，所有emit事件返回的dataClone值一旦被开启编辑模式，则会重置。这样做更符合组件应用场景。避免了源数据data未更新而缓存了dataClone的情况
 */
 import { Icon, Select, Option, Input, Tooltip } from 'iview'
 import IconCol from './IconCol.js'
@@ -130,7 +134,8 @@ export default {
             // 组件中详细的配置项
             const cellWidth = col.width
             const cellPlaceholder = col.placeholder
-            const cellClearable = col.clearable // 仅对input有效
+            const cellClearable = col.clearable
+            const cellFilterable = col.filterable // 只对select有效
 
             let render
             // input的render类型
@@ -166,6 +171,8 @@ export default {
                                       ?`width: ${cellWidth}px`
                                       : '' 
                     const selectPlaceholder = cellPlaceholder || '请选择'
+                    const selectClearable = cellClearable || false
+                    const selectFilterable = cellFilterable || false
                     /**
                     * 在vuejs的render里写jsx，iview认定为非template和非render模式，所以Select和Option必须改成i-select和i-option 。
                     * 否则当组件被调用时，cloumns被动态改变(例如改变selectInfo)，这两个组件会报错
@@ -178,17 +185,28 @@ export default {
                         </i-option>
                     )
                     
-                    // 下拉框默认选中的值先取组件传入的result，如果没有，则从源数据data找相应的key.最终显示出来的都是label，但是绑定存储的是value
-                    const selectResultValue = selectInfo.result || params.row[key]
+                    // 下拉框默认选中的值先取组件传入的default，如果没有，则从源数据data找相应的key.最终显示出来的都是label，但是绑定存储的是value
+                    const selectResultValue = selectInfo.hasOwnProperty('default')
+                                            ? selectInfo.default 
+                                            : params.row[key]
                     const selectResult = optionItems.find(a => a.value == selectResultValue)
                     const selectResultLabel = (selectResult && selectResult.label) || selectResultValue
+
+                    const handler = val => {
+                        this.dataClone[index][key] = val 
+                        if(selectInfo.hasOwnProperty('bindValue')) {
+                            selectInfo.bindValue = val
+                        }
+                    }
 
                     return !this.dataClone[index].isCellEditable
                             ? ( <p style={{width: `${cellWidth}px`}}>{selectResultLabel}</p> )
                             : (
                                 <i-select 
                                     value={selectResultValue}
-                                    on-on-change={val => {this.dataClone[index][key] = val}}
+                                    clearable={selectClearable}
+                                    filterable={selectFilterable}
+                                    on-on-change={val => {handler(val)}}
                                     style={selectWidth}
                                     placeholder={selectPlaceholder}
                                 >
@@ -205,7 +223,7 @@ export default {
 
                 render = (h, params) => {
                     const index = params.row._index
-                    
+
                     const editHandler = () => {
                         if(this.dataClone[index].isCellEditable == false) {
                             this.initDataClone() //每次点击编辑，就让dataClone恢复到初始状态
@@ -323,6 +341,15 @@ export default {
             })
 
             this.dataClone = clone
+        },
+        // 清空dataClone内缓存数据对应索引对应key的值
+        cleanDataCloneByKey(key, index = 'all') {
+            if(index == 'all') {
+                this.dataClone.forEach(a => a[key] = '')
+            }
+            else {
+                this.dataClone[index][key] = ''
+            }
         }
     }
 }

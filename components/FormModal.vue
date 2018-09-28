@@ -47,6 +47,7 @@
                         v-if="form.key == 'select'"
                         v-model="form.result"
                         :clearable="form.clearable || false"
+                        :filterable="form.filterable || false"
                         :multiple="form.multiple || false"
                         :disabled="form.disabled || false"
                         :placeholder="form.placeholder || '请选择'"
@@ -152,6 +153,7 @@
                     ],
                     result  select最终被选中的value,单选状态为字符串，多选状态必须为数组
                     clearable  是否可删除，只有单选模式生效
+                    filterable 是否可被搜索，即是否可以输入过滤下拉框
                     multiple   是否多选
                     placeholder  默认显示的文字内容
                     disabled 控制select是否可用，默认为false

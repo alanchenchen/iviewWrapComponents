@@ -34,15 +34,24 @@
                 key, // 必选，对应data内的数据key，用法与iview中Table组件一致
                 type: 'select',
                 /***
-                 *  可选，当type为select时必选，select的数据，必须要有item和result两个值，item是个数组，数组项包含lable和value,result为select选中的值
-                 *  select选中值会先取result，如果没有result或者为空，则会从源数据data中匹配对应的key值。显示的总会是label，而缓存数据dataClone绑定的总会是value
+                 *  可选，当type为select时必选，select的数据，
+                 *  必须要有item，item是个数组，数组项包含lable和value
+                 *  可选default，为select初次渲染默认选中的值
+                 *  可选bindValue，只能用来给父组件监听select绑定的值，只有当select触发change事件才改变一次
+                 *  select选中值会先取default(关闭编辑模式渲染的p标签也会先取default)
+                 *  如果没有default这个key，则会从源数据data中匹配对应的key值。
+                 *  如果能匹配到label，则显示label，否则显示default的值value
+                 *  缓存数据dataClone绑定的总是value
                  */
                 selectInfo: {
                     item: [{ label, value }],
-                    result: ''
+                    default,
+                    bindValue
                 }, 
                 width, // 可选，Number，单元格的宽度
                 placeholder, // 可选，String，默认为'请选择'字符串
+                clearable, // 可选，Boolean，是否可以一键删除输入的内容，默认为false
+                filterable // 可选，Boolean，是否开启select可以输入过滤功能，只对select生效，默认为false
             }
 
             *** Icon类型编辑列 ***       
@@ -93,6 +102,9 @@
 * updateConfig 开启编辑模式后点击保存icon触发，返回3个参数rest,params和done。rest为修改后的当前行表单数据，params为table的当前行原始数据，done为一个函数，调用后关闭编辑模式
 * createConfig 只有源数据data新建了一条空数据，开启编辑模式后点击保存icon才触发，返回参数与updateConfig一致
 * deleteConfig 点击删除icon触发，返回2个参数rest和params，rest为修改后的当前行表单数据，params为table的当前行原始数据
+
+### methods
+* `cleanDataCloneByKey(key, index='all')` 清空dataClone内缓存数据对应索引对应key的值,索引index默认为all，即清空所有项对应key值
 
 ### Attention
 1. EditTable组件其实不会更改源数据data，而是深度拷贝了一个dataClone来进行所有的操作，dataClone会监听data改变来同步更新，这才是组件本身的意义

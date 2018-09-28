@@ -12,6 +12,11 @@
 * [EditTable](./docs/EditTable.md)
 * [BreadLink](./docs/BreadLink.md)
 # Update Logs
+* *2018/09/28* 
+    1. EditTable组件新增一个component method，`cleanDataCloneByKey`清空dataClone内缓存数据对应索引对应key的值
+    2. 优化了EditTable组件渲染为select单元格的参数。result改为default，可选。新增一个bindValue，专门用来监听下拉框绑定值
+    3. FormModal组件渲染为select新增1个参数，`filterable`用于是否开启select搜索功能，即可以输入过滤下拉框
+
 * *2018/09/20* 
     1. EditTable组件新增一个emit event，`editConfig`通过点击修改icon触发，此时表格行数据进入编辑模式
     2. 优化了EditTable组件渲染为select单元格的一个bug。此前当在编辑模式中切换下拉框，然后关闭编辑模式，但源数据并未修改，select表示为切换后的数据。目前已修改为源数据
