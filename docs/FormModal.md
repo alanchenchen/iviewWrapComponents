@@ -93,8 +93,8 @@
 > data内可以任意组合各种key的对象，每个对象代表一个form子组件，子组件的顺序由数组内顺序决定
 
 ### emit events
-* submit 通过点击ok-text按钮触发，返回一个参数，returnVal，包含所有表单组件最后选中的值
+* submit 通过点击ok-text按钮触发，返回2个参数，returnVal是一个对象，包含所有表单组件最后选中的值, done是一个函数，调用后关闭modal，否则modal不会关闭
 
 ### slot
 * default, 使用方法与iview的Modal一致, default会覆盖掉原有的表单组件
-* footer, 使用方法与iview的Modal一致 
+* footer, 使用方法与iview的Modal一致，会覆盖默认的submit事件

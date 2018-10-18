@@ -2,12 +2,10 @@
     <div class="FormModal">
         <Modal 
             v-model="isShow" 
-            :ok-text="okText" 
             :width="width+'px'" 
             :styles="styles"
             :closable="closable"
-            :mask-closable="closable"
-            @on-ok="submit">
+            :mask-closable="closable">
             <p slot="header" style="font-size:16px">
                 <span>{{data.title}}</span>
             </p>
@@ -101,8 +99,11 @@
                 </FormItem>
             </Form>
             <slot v-if="$slots.default"></slot>
-            <div slot="footer" v-if="$slots.footer">
-                <slot name="footer"></slot>
+            <div slot="footer">
+                <slot name="footer">
+                    <Button type="text" size="large" @click="cancel">取消</Button>
+                    <Button type="primary" size="large" @click="submit">{{okText}}</Button>
+                </slot>
             </div>
         </Modal>
     </div>
@@ -187,8 +188,8 @@
                 }
             ]
         }
-    4. 点击ok-text按钮触发返回submit事件。返回一个returnVal参数，包含所有表单组件最后选中的值
-    5. slot有default和footer，使用方法与Modal一致 default会覆盖掉原有的表单组件
+    4. 点击ok-text按钮触发返回submit事件。返回一个returnVal参数，包含所有表单组件最后选中的值,返回一个done函数，调用后关闭modal
+    5. slot有dafault和footer，使用方法与Modal一致 default会覆盖掉原有的表单组件，footer会覆盖掉原有submit事件
 
  */
 export default {
@@ -235,7 +236,14 @@ export default {
         }
     },
     methods: {
+        cancel() {
+            this.isShow = false
+        },
         submit() {
+            const done = () => {
+                this.isShow = false
+            }
+            
             const returnVal = this.data.form.map(form => {
                 let lable, value 
                 const type = form.key
@@ -249,7 +257,7 @@ export default {
                 }
                 return {type, lable, value}
             })
-            this.$emit('submit', returnVal)
+            this.$emit('submit', returnVal, done)
         }
     }
 }
