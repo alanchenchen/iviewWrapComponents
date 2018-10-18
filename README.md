@@ -12,6 +12,9 @@
 * [EditTable](./docs/EditTable.md)
 * [BreadLink](./docs/BreadLink.md)
 # Update Logs
+* *2018/10/18* 
+    1. FormModal组件在submit事件中新增一个参数返回，done，用于手动关闭modal
+
 * *2018/09/28* 
     1. EditTable组件新增一个component method，`cleanDataCloneByKey`清空dataClone内缓存数据对应索引对应key的值
     2. 优化了EditTable组件渲染为select单元格的参数。result改为default，可选。新增一个bindValue，专门用来监听下拉框绑定值
