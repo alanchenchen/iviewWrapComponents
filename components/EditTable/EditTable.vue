@@ -12,8 +12,8 @@
 /*
     component: 基于iview扩展的可编辑表格，目前可编辑input和select组件
     author: Alan Chen
-    version: 0.0.4
-    lastDate: 2018/9/28
+    version: 0.0.5
+    lastDate: 2018/10/19
 
     使用说明：
         1. 必须搭载iveiw库使用
@@ -25,7 +25,7 @@
                 selectInfo => 可选，Object，当type为select时必选，select的数据，必须要有item，item是个数组，数组项包含lable和value,
                               可选default，为select默认选中的值。可选bindValue。为select实时绑定的值，用于父组件外部监听
                               下拉框的默认选中值先取default，如果没有default则自动从当前行数据中取对应的key。显示出来的总是label，而dataClone里绑定的是value
-                width => 可选，Number，单元格的宽度，除icon外，普通cell，可编辑input，可编辑select都会生效，默认自动宽度
+                width => 可选，Number，单元格的宽度，普通cell，可编辑input，可编辑select都会生效，默认自动宽度,icon的宽度表现为iview的表格宽度
                 placeholder => 可选，String，可编辑单元格的占位符。可编辑input默认为空字符串，可编辑select默认为'请选择'字符串
                 clearable => 可选，Boolean，是否开启可以点击删除的icon功能，可编辑input和select，默认为false
                 filterable => 可选，Boolean，是否开启select可以输入过滤功能，只对select生效，默认为false
@@ -39,8 +39,10 @@
                         iconType: '', 可选，为iview中icon组件的type值，默认为对应按钮的type
                         iconColor: '', 可选，为iview中icon组件的color值，默认为对应按钮的color
                         tooltip: '', 可选，按钮的提示框值,默认为'删除'
-                        visible: 布尔值 可选，icon是否显示,默认为true,如果为false，没有index，则默认隐藏所有行的icon
-                        index: 数字 可选，仅当visible为false生效，表现为index对应的行数下的单元格隐藏icon，其余行数icon则不隐藏
+                        visible: 布尔值 | 函数 
+                                 可选，icon是否显示,默认为undefined,如果为true，显示所有行的icon，如果为false，隐藏所有行的icon
+                                 如果为函数，则返回3个参数，row表示表格当前行数，len表示所有行数，status表示当前行是否处于编辑状态，需要return一个布尔值，只显示满足函数条件的对应icon
+
                     ]
 
         3. emit event有4个自定义事件
@@ -276,12 +278,22 @@ export default {
                             iconColor: '#ed3f14'
                         }
                     }
+                    
+                    // 当前dataClone数据长度,当前行数和当前行的状态(是否正在编辑)，为了让开发者自定义icon的显示隐藏
+                    const dataCloneLen = this.dataClone.length
+                    const currentRow = params.index + 1
+                    const isEditable = this.dataClone[index].isCellEditable
+                    const lenConfig = {
+                        dataCloneLen,
+                        currentRow,
+                        isEditable
+                    }
 
                     return (
                         <p>
-                            <IconCol type = {edit} defaultConfig = {defaultIconConfig} row={params.index} />
-                            <IconCol type = {save} defaultConfig = {defaultIconConfig} row={params.index} />
-                            <IconCol type = {del} defaultConfig = {defaultIconConfig} row={params.index} />
+                            <IconCol type = {edit} defaultConfig = {defaultIconConfig} lenConfig={lenConfig} />
+                            <IconCol type = {save} defaultConfig = {defaultIconConfig} lenConfig={lenConfig} />
+                            <IconCol type = {del} defaultConfig = {defaultIconConfig} lenConfig={lenConfig} />
                         </p>
                     )
                 }
@@ -295,7 +307,10 @@ export default {
                 }
             }
             
-            return {title, render}
+            const isRedefineIconCellWidth = type == 'icon' && cellWidth
+            return  isRedefineIconCellWidth
+                  ? {title, width: cellWidth, render}
+                  : {title, render}
         },
         //深度拷贝data到dataClone，并添加几个必要的key，如：isCellEditable(是否可编辑) 和  isEmptyCell(是否为空数据，区分updateConfig和createConfig事件)
         updateDataClone() {
