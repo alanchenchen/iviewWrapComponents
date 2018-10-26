@@ -11,7 +11,11 @@
 * [FlexModal](./docs/FlexModal.md)
 * [EditTable](./docs/EditTable.md)
 * [BreadLink](./docs/BreadLink.md)
+* [FullScreen](./docs/FullScreen.md)
 # Update Logs
+* *2018/10/26*
+    1. 新增FullScreen全屏功能组件
+
 * *2018/10/19*
     1. EditTable组件的columns选项当type为icon时，对visible选项进一步优化，去掉index选项，visible支持传入funcion，精准控制icon的显示隐藏
     2. EditTable组件的columns选项当type为icon时，支持width选项，表现为icon外层单元格的宽度
