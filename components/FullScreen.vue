@@ -16,11 +16,11 @@
     /**
     *  component: FullScreen 全屏组件，兼容IE,Firefox和Chorme内核
     *  author: Alan Chen
-    *  lastDate: 2018/10/26
+    *  lastDate: 2018/10/30
     *  使用：
     *    props：
     *      1. tooltip [Object],可选，格式为{in: '' out:''}，按钮在全屏或退出全屏模式的tooltip文本，默认为：'点击进入全屏'和'点击退出全屏'
-    *      2. iconType [Object],可选，格式为{in: '' out:''}，按钮在全屏或退出全屏模式的icon类型，默认为：'arrow-expand'和'arrow-shrink' 
+    *      2. iconType [Object],可选，格式为{in: '' out:''}，按钮在全屏或退出全屏模式的icon类型，默认为：'md-expand'和'md-contract' 
     *      3. iconSize [Number],可选，默认为26
     *      4. dom [String],可选，触发全屏模式的dom结构，格式为jq选择器字符串，默认为'html'  
     *      5. style [String | Object]，可选，默认所有组件都支持原生的style选项，无论是原生标签还是自定义组件
@@ -47,8 +47,8 @@ export default {
             type: Object,
             default() {
                 return {
-                    in: 'arrow-expand',
-                    out: 'arrow-shrink'
+                    in: 'md-expand',
+                    out: 'md-contract'
                 }
             }
         },

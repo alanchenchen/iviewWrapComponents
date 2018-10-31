@@ -85,17 +85,17 @@
     const defaultIconConfig = {
         'edit': {
             tooltip: '修改',
-            iconType: 'edit',
+            iconType: 'md-create',
             iconColor: '#2d8cf0'
         },
         'save': {
             tooltip: '保存',
-            iconType: 'ios-checkmark-outline',
+            iconType: 'ios-checkmark-circle-outline',
             iconColor: '#19be6b'
         },
         'delete': {
             tooltip: '删除',
-            iconType: 'android-cancel',
+            iconType: 'md-close-circle',
             iconColor: '#ed3f14'
         }
     }

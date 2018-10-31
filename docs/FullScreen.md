@@ -3,7 +3,7 @@
 
 ### props
 * tooltip，`Object`，可选，格式为`{in: '' out:''}`，按钮在全屏或退出全屏模式的tooltip文本，默认为：'点击进入全屏'和'点击退出全屏'
-* iconType，`Object`，可选，格式为`{in: '' out:''}`，按钮在全屏或退出全屏模式的icon类型，默认为：'arrow-expand'和'arrow-shrink' 
+* iconType，`Object`，可选，格式为`{in: '' out:''}`，按钮在全屏或退出全屏模式的icon类型，默认为：'md-expand'和'md-contract' 
 * iconSize，`Number`，可选，默认为26，按钮icon的大小
 * dom，`String`，可选，默认为'html'，触发全屏模式的dom结构，格式为jq选择器字符串  
 * style，`String | Object`，可选，默认所有组件都支持原生的style选项，无论是原生标签还是自定义组件

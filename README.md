@@ -2,17 +2,21 @@
 
 > Author : Alan Chen
 
-> version: 只兼容了iview2.x版本，不保证完全兼容3.x, 最好全局使用iview，`Vue.use(iview)`，因为封装的组件使用了大量iview基础组件
+> version: 兼容3.x, 最好全局使用iview，`Vue.use(iview)`，因为封装的组件使用了大量iview基础组件
 
 > Date: 2018/09/10 
 
 # Components
-* [FormModal](./docs/FormModal.md)
+* [FormExtModal](./docs/FormExtModal.md)
 * [FlexModal](./docs/FlexModal.md)
 * [EditTable](./docs/EditTable.md)
 * [BreadLink](./docs/BreadLink.md)
 * [FullScreen](./docs/FullScreen.md)
 # Update Logs
+* *2018/10/31*
+    1. 升级到iview3.1.4，解决版本不兼容问题
+    2. FormModal更新为FormExtModal，去掉input的inline功能，去掉所有表单选项中的value或result，新增表单验证功能
+
 * *2018/10/26*
     1. 新增FullScreen全屏功能组件
 

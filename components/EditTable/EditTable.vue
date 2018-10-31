@@ -12,8 +12,8 @@
 /*
     component: 基于iview扩展的可编辑表格，目前可编辑input和select组件
     author: Alan Chen
-    version: 0.0.5
-    lastDate: 2018/10/19
+    version: 0.0.6
+    lastDate: 2018/10/30
 
     使用说明：
         1. 必须搭载iveiw库使用
@@ -260,21 +260,21 @@ export default {
                             style: {marginRight:'15px'},
                             clickHandler: editHandler,
                             tooltip: '修改',
-                            iconType: 'edit',
+                            iconType: 'md-create',
                             iconColor: '#2d8cf0'
                         },
                         'save': {
                             style: {marginRight:'15px'},
                             clickHandler: saveHandler,
                             tooltip: '保存',
-                            iconType: 'ios-checkmark-outline',
+                            iconType: 'ios-checkmark-circle-outline',
                             iconColor: '#19be6b'
                         },
                         'delete': {
                             style: {},
                             clickHandler: delHandler,
                             tooltip: '删除',
-                            iconType: 'android-cancel',
+                            iconType: 'md-close-circle',
                             iconColor: '#ed3f14'
                         }
                     }
