@@ -4,7 +4,7 @@ import { Icon, Tooltip } from 'iview'
  * @author AlanChen
  * @module IconCol EditTable中控制icon按钮的一列渲染组件，可以自定义icon，也有默认值
  * @description vue的函数式组件，由于vue中只支持单纯的jsx展示，不支持react的函数式组件，所以只能单独写vue组件
- * @param {Number} lenConfig (props) table组件中对应的关于行数的对象
+ * @param {Object} lenConfig (props) table组件中对应的关于行数的对象
  * @param {Object} type (props) 用户通过clomuns传入的自定义icon的对象
  * @param {Object} defaultConfig (props) 组件默认的3个icon的配置对象
  * 

@@ -15,7 +15,8 @@
                 title, // 可选，表头的名称，默认为空字符串
                 key, // 必选，对应data内的数据key，用法与iview中Table组件一致
                 type, // 可选，有input,select和icon三种,不填默认渲染为普通表格cell组件，不可编辑
-                width // 可选，Number，单元格的宽度
+                width, // 可选，Number，单元格的宽度
+                align // 可选，String，列单元格的文本对齐方式，默认为'left'左对齐，可选'right'和'center'
             }
 
             *** Input类型编辑列 ***            
@@ -24,6 +25,7 @@
                 key, // 必选，对应data内的数据key，用法与iview中Table组件一致
                 type: 'input',
                 width, // 可选，Number，input组件的宽度
+                align, // 可选，String，列单元格的文本对齐方式，默认为'left'左对齐，可选'right'和'center'
                 placeholder, // 可选，String，默认为空字符串
                 clearable // 可选，Boolean，是否可以一键删除输入的内容，默认为false
             }
@@ -49,6 +51,7 @@
                     bindValue
                 }, 
                 width, // 可选，Number，select组件的宽度
+                align, // 可选，String，列单元格的文本对齐方式，默认为'left'左对齐，可选'right'和'center'
                 placeholder, // 可选，String，默认为'请选择'字符串
                 clearable, // 可选，Boolean，是否可以一键删除输入的内容，默认为false
                 filterable // 可选，Boolean，是否开启select可以输入过滤功能，只对select生效，默认为false
@@ -60,6 +63,7 @@
                 title, // 可选，表头的名称，默认为空字符串
                 type: 'icon',
                 width, // 单元格的宽度
+                align, // 可选，String，列单元格的文本对齐方式，默认为'center'居中对齐，可选'left'和'right'
                 custom: [ // Array, 可选，不填表示执行默认配置
                     {
                         key: 'delete',  // 必选，有'edit','save'和'delete'三个值，对应三个按钮

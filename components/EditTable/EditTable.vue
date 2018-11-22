@@ -12,8 +12,8 @@
 /*
     component: 基于iview扩展的可编辑表格，目前可编辑input和select组件
     author: Alan Chen
-    version: 0.0.6
-    lastDate: 2018/10/30
+    version: 0.0.7
+    lastDate: 2018/11/21
 
     使用说明：
         1. 必须搭载iveiw库使用
@@ -26,6 +26,7 @@
                               可选default，为select默认选中的值。可选bindValue。为select实时绑定的值，用于父组件外部监听
                               下拉框的默认选中值先取default，如果没有default则自动从当前行数据中取对应的key。显示出来的总是label，而dataClone里绑定的是value
                 width => 可选，Number，单元格的宽度，普通cell，可编辑input，可编辑select都会生效，默认自动宽度,icon的宽度表现为iview的表格宽度
+                align => 可选，String，单元格内文本的对齐方式，操作按钮默认居中对齐，其余默认为左对齐，可选'left', 'center'和'right'
                 placeholder => 可选，String，可编辑单元格的占位符。可编辑input默认为空字符串，可编辑select默认为'请选择'字符串
                 clearable => 可选，Boolean，是否开启可以点击删除的icon功能，可编辑input和select，默认为false
                 filterable => 可选，Boolean，是否开启select可以输入过滤功能，只对select生效，默认为false
@@ -42,7 +43,6 @@
                         visible: 布尔值 | 函数 
                                  可选，icon是否显示,默认为undefined,如果为true，显示所有行的icon，如果为false，隐藏所有行的icon
                                  如果为函数，则返回3个参数，row表示表格当前行数，len表示所有行数，status表示当前行是否处于编辑状态，需要return一个布尔值，只显示满足函数条件的对应icon
-
                     ]
 
         3. emit event有4个自定义事件
@@ -135,6 +135,7 @@ export default {
             const selectInfo = col.selectInfo
             // 组件中详细的配置项
             const cellWidth = col.width
+            let cellAlign = col.align
             const cellPlaceholder = col.placeholder
             const cellClearable = col.clearable
             const cellFilterable = col.filterable // 只对select有效
@@ -219,6 +220,7 @@ export default {
             }
             // 表格最后一列的icon操作按钮的render类型
             else if(type == 'icon') {
+                cellAlign = 'center' // icon单元格默认居中显示
                 const edit = custom.find(item => item.key == 'edit') || { key: 'edit'}
                 const save = custom.find(item => item.key == 'save') || { key: 'save'}
                 const del = custom.find(item => item.key == 'delete')  || { key: 'delete'}
@@ -307,10 +309,13 @@ export default {
                 }
             }
             
-            const isRedefineIconCellWidth = type == 'icon' && cellWidth
-            return  isRedefineIconCellWidth
-                  ? {title, width: cellWidth, render}
-                  : {title, render}
+            const WidthOpts = cellWidth
+                            ? { width: cellWidth + 18 }
+                            : {}
+            const TextAlignOpts = cellAlign
+                            ? { align: cellAlign }
+                            : {}
+            return {title, render, ...WidthOpts, ...TextAlignOpts}
         },
         //深度拷贝data到dataClone，并添加几个必要的key，如：isCellEditable(是否可编辑) 和  isEmptyCell(是否为空数据，区分updateConfig和createConfig事件)
         updateDataClone() {

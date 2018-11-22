@@ -13,6 +13,10 @@
 * [BreadLink](./docs/BreadLink.md)
 * [FullScreen](./docs/FullScreen.md)
 # Update Logs
+* *2018/11/22*
+    1. 优化EditTable中colunms选项width的实现方式，现在width表现为input和select的宽度，但是外层单元格宽度会自动在其宽度上加上18像素，为了更好的视觉体验
+    2. EditTable中colunms选项新增一个align文本对齐。
+
 * *2018/10/31*
     1. 升级到iview3.1.4，解决版本不兼容问题
     2. FormModal更新为FormExtModal，去掉input的inline功能，去掉所有表单选项中的value或result，新增表单验证功能
