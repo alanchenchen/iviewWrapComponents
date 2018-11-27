@@ -20,7 +20,7 @@
         2. props必须传data和columns。data和columns均为数组。可选height(高度),stripe(是否开启斑马纹),loading(加载状态),disableCreateMode(是否关闭createConfig事件)
             columns数组项可选值有 
                 title => 可选，String，表头的名称，默认为空字符串
-                key => 必选，String，对应data内的数据key
+                key => 必选，String，对应data内的数据key。如果data内不存在，并且type为'input'或'select'，则会在dataClone上添加key，value为用户编辑的数据！
                 type => 可选，String，有input,select和icon三种,不填默认渲染为普通表格cell组件，不可编辑
                 selectInfo => 可选，Object，当type为select时必选，select的数据，必须要有item，item是个数组，数组项包含lable和value,
                               可选default，为select默认选中的值。可选bindValue。为select实时绑定的值，用于父组件外部监听

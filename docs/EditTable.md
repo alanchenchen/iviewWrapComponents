@@ -13,7 +13,7 @@
             *** 普通不可编辑列 ***
             {
                 title, // 可选，表头的名称，默认为空字符串
-                key, // 必选，对应data内的数据key，用法与iview中Table组件一致
+                key, // 必选，对应data内的数据key，用法与iview中Table组件一致。如果data内不存在，并且type为'input'或'select'，则会在dataClone上添加key，value为用户编辑的数据！
                 type, // 可选，有input,select和icon三种,不填默认渲染为普通表格cell组件，不可编辑
                 width, // 可选，Number，单元格的宽度
                 align // 可选，String，列单元格的文本对齐方式，默认为'left'左对齐，可选'right'和'center'
