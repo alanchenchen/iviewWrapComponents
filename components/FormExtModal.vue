@@ -88,7 +88,7 @@
 /**
  *  component: FormExtModal 集成表单组件的modal框，支持input，select,radio以及switch。
  *  author: Alan Chen
- *  lastDate: 2018/10/31
+ *  lastDate: 2018/11/28
  *  使用：
  *      props:
  *          1. value  通过v-model来绑定一个变量来控制modal显示，默认为false
@@ -106,6 +106,7 @@
  *                      {   
  *                          key: 'input',
  *                          label,  左侧input的标题
+ *                          default, input默认绑定的值，可选，默认为空
  *                          type   input的类型，默认为text,可选值为 text、password、textarea、url、email、date
  *                          placeholder input的placehoder
  *                          disabled  控制input是否可用，默认为false
@@ -118,6 +119,7 @@
  *                      {
  *                          key: 'select',
  *                          label, 左侧select的标题
+ *                          default, select默认绑定的值，可选，默认为空
  *                          item: [
  *                              label, option中显示的内容
  *                              value  option中与label对应绑定的值
@@ -135,6 +137,7 @@
  *                      {
  *                           key: 'switch',
  *                           label,  switch左侧的名称
+ *                           default, switch默认绑定的值，可选，默认为false
  *                           item,  【Array | String】开关的名称
  *                           size,     开关大小，可选large，default和small
  *                           disabled, 是否被禁用，默认为false
@@ -145,6 +148,7 @@
  *                      {
  *                          key: 'radio',
  *                          label,  radio左侧的名称
+ *                          default, switch默认绑定的值，可选，默认为空
  *                          item: [
  *                              label,  radio的名字
  *                              disabled  是否被禁用，默认为false
@@ -156,7 +160,7 @@
  *                      }  
  *                  ]
  *              }
- *            data中每个数组项对象都支持validate，可选，默认为空数组，多个规则会按照顺序依次表单验证，格式如下：
+ *            data中每个数组项对象都支持validate，validate默认为空数组，用于表单验证，格式如下：
  *                  validate： [
  *                      { 
  *                          required,  [boolean],验证是否必输入，默认为false
@@ -233,24 +237,42 @@ export default {
         },
         isShow(val) {
             this.$emit('input', val) 
+        },
+        // 当data内form发生改变，重新初始化表单绑定的值，为了让组件外可以动态改变表单绑定值
+        'data.form': {
+            handler() {
+                this.init()
+            },
+            deep: true
         }
     },
-    // 初始化组件的值，包括表单组件绑定的值，以及rules
+    
     created() {
-        this.data.form.forEach((item, i) => {
-            const type = item.key
-            const validator = item.validate || []
-            
-            if(type == 'select' && item.multiple) {
-                this.$set(this.formData, `${type}-${i}`, [])
-            }
-            else {
-                this.$set(this.formData, `${type}-${i}`, '')
-            }
-            this.$set(this.formValidator, `${type}-${i}`, validator)
-        })
+        this.init()
     },  
     methods: {
+        // 初始化组件的值，包括表单组件绑定的值，以及rules
+        init() {
+            this.data.form.forEach((item, i) => {
+                const type = item.key
+                const defaultVal = item.default
+                const validator = item.validate || []
+                
+                if(type == 'select' && item.multiple) {
+                    const val = defaultVal || []
+                    this.$set(this.formData, `${type}-${i}`, val)
+                }
+                else if(type == 'switch') {
+                    const val = defaultVal || false
+                    this.$set(this.formData, `${type}-${i}`, val)
+                }
+                else {
+                    const val = defaultVal || ''
+                    this.$set(this.formData, `${type}-${i}`, val)
+                }
+                this.$set(this.formValidator, `${type}-${i}`, validator)
+            })
+        },
         cancel() {
             this.isShow = false
         },

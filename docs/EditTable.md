@@ -118,3 +118,10 @@
 2. 如果用户需要将对dataClone的操作映射到源数据data，只需要在保存后改变data即可，表格数据会同步更新
 3. 为了让组件逻辑更精简，所有emit事件返回的dataClone值一旦被开启编辑模式，则会重置。这样做更符合组件应用场景。避免了源数据data未更新而缓存了dataClone的情况
 4. 事件返回的dataClone，如果用户并未修改任何值，则对应编辑的值为空，源数据data不会改变，dataClone只会反映用户修改的值。此时可以比较dataClone和data的值，如果dataClone对应key为空，则取data的key，如果不为空，则取dataClone的key
+
+### Tips
+1. columns中type为icon时候，visible是个非常好用的api。一般visible为function(建议是箭头函数)，通过判断返回参数status来动态控制icon的显示和隐藏
+2. columns中key值可以是data源数据中存在的，也可以是新增。当不存在时，新增的key会绑定在dataClone上，对应key值为用户下拉框选中的值。而data源数据不会发生任何改变
+3. columns中selectInfo下的bindValue是专门用来监听下拉框选中值的。这个值会在初次渲染赋值一次，当select发生change时会再次赋值。
+4. columns中type为select时。select监听的是change事件，也就是说，可能你选中了默认值。事件不会返回！
+5. updateConfig和createConfig事件中前两个参数分别为dataClone和data。dataClone如果某一项为空，表面用户并未修改，之所以这这样做，是为了开发者可以清楚的知道哪个值改变过

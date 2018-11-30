@@ -13,6 +13,10 @@
 * [BreadLink](./docs/BreadLink.md)
 * [FullScreen](./docs/FullScreen.md)
 # Update Logs
+* *2018/11/27*
+    1. 优化EditTable中colunms选项bindValue的逻辑，一渲染就先赋值为select的默认值(data对应key的值或default)，方便bindValue被监听直接触发watcher
+    2. FormExtModal中form数组项新增default选项，可选，用于自定义表单绑定值
+
 * *2018/11/22*
     1. 优化EditTable中colunms选项width的实现方式，现在width表现为input和select的宽度，但是外层单元格宽度会自动在其宽度上加上18像素，为了更好的视觉体验
     2. EditTable中colunms选项新增一个align文本对齐。

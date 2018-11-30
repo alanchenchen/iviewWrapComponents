@@ -12,8 +12,8 @@
 /*
     component: 基于iview扩展的可编辑表格，目前可编辑input和select组件
     author: Alan Chen
-    version: 0.0.7
-    lastDate: 2018/11/21
+    version: 0.0.8
+    lastDate: 2018/11/27
 
     使用说明：
         1. 必须搭载iveiw库使用
@@ -195,12 +195,16 @@ export default {
                     const selectResult = optionItems.find(a => a.value == selectResultValue)
                     const selectResultLabel = (selectResult && selectResult.label) || selectResultValue
 
-                    const handler = val => {
-                        this.dataClone[index][key] = val 
+                    const handler = (val, flag=true) => {
+                        if(flag) {
+                            this.dataClone[index][key] = val 
+                        }
                         if(selectInfo.hasOwnProperty('bindValue')) {
                             selectInfo.bindValue = val
                         }
                     }
+                    // 先让bindValue赋值为默认值，而dataClone只记录用户选择的，因为bindValue在被监听时需要赋值一次触发watcher
+                    handler(selectResultValue, false)
 
                     return !this.dataClone[index].isCellEditable
                             ? ( <p style={{width: `${cellWidth}px`}}>{selectResultLabel}</p> )

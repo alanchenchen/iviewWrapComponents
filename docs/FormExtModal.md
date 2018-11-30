@@ -18,6 +18,7 @@
                 {   
                     key: 'input',
                     label,  // 必选,左侧input的标题
+                    default, // input默认绑定的值，可选，默认为空
                     type   // input的类型，默认为text,可选text、password、textarea、url、email、date
                     placeholder // input的placehoder
                     disabled  // 控制input是否可用,默认为false
@@ -30,6 +31,7 @@
                 {
                     key: 'select',
                     label, // 必选,左侧select的标题
+                    default, // select默认绑定的值，可选，当单选状态默认为空字符串，多选状态默认为空数组
                     item: [ // 必选,Array
                         {
                             label, // option中显示的内容
@@ -49,6 +51,7 @@
                 {
                     key: 'switch',
                     label, // 必选,switch左侧的名称
+                    default, // switch默认绑定的值，可选，默认为false
                     item: [], // 可选,Array开关的名称，格式为['开', '关'],默认为空字符串
                     size, // 开关大小，可选large，default和small。默认为default
                     hide // 控制switch是否隐藏，默认为false
@@ -58,6 +61,7 @@
                 {
                     key: 'radio',
                     label, // 必选,radio左侧的名称
+                    default, // radio默认绑定的值，可选，默认为空
                     item: [ // 必选,Array
                         {
                             label, // 必选,radio的名字
@@ -107,3 +111,9 @@
 ### slot
 * default, 使用方法与iview的Modal一致, default会覆盖掉原有的表单组件
 * footer, 使用方法与iview的Modal一致，会覆盖默认的submit事件
+
+### Tips
+1. 因为vue2.x的数据监听机制基于`Object.defineProperty`，所以如果需要响应式改变FormExtModal的任何表单项配置，必须要先声明所有需要更改的key，例如，如果需要动态显示隐藏，则必须先声明hide为false。
+2. FormExtModal的表单验证支持连续验证，通过数组索引来依次顺序验证。一般是先验证required为true，再通过函数validator自定义验证。
+3. FormExtModal内form的每个对象都支持新增自定义的key，这些key不会被事件返回。
+4. 每个类型的key支持的对象都可以可选一个default值，这个值是用来动态更改对应表单组件的绑定值。不填组件会自动生成对应的零值来绑定
