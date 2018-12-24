@@ -13,6 +13,10 @@
 * [BreadLink](./docs/BreadLink.md)
 * [FullScreen](./docs/FullScreen.md)
 # Update Logs
+* *2018/12/24*
+    1. 优化FormExtModal中default监听，去掉对象的深度监听(Vue不建议)，排除了default赋值导致循环触发watcher的问题
+    2. FormExtModal新增一个emit event `change`，当表单组件值发生改变时触发
+
 * *2018/11/27*
     1. 优化EditTable中colunms选项bindValue的逻辑，一渲染就先赋值为select的默认值(data对应key的值或default)，方便bindValue被监听直接触发watcher
     2. FormExtModal中form数组项新增default选项，可选，用于自定义表单绑定值

@@ -88,7 +88,7 @@
 /**
  *  component: FormExtModal 集成表单组件的modal框，支持input，select,radio以及switch。
  *  author: Alan Chen
- *  lastDate: 2018/11/28
+ *  lastDate: 2018/12/18
  *  使用：
  *      props:
  *          1. value  通过v-model来绑定一个变量来控制modal显示，默认为false
@@ -148,7 +148,7 @@
  *                      {
  *                          key: 'radio',
  *                          label,  radio左侧的名称
- *                          default, switch默认绑定的值，可选，默认为空
+ *                          default, radio默认绑定的值，可选，默认为空
  *                          item: [
  *                              label,  radio的名字
  *                              disabled  是否被禁用，默认为false
@@ -185,7 +185,8 @@
  *                      }
  *                  ]
  *      emitEvents:
- *          1. submit,点击ok-text按钮触发。返回2个参数，params包含所有表单组件最后选中的值和表单验证的结果。done是一个回调函数，调用后关闭modal
+ *          1. change,当组件内部绑定的formData(表单绑定值)发生改变触发。返回1个参数，一个数组，根据form的索引返回绑定的值
+ *          2. submit,点击ok-text按钮触发。返回2个参数，params包含所有表单组件最后选中的值和表单验证的结果。done是一个回调函数，调用后关闭modal
  *      methods：
  *          1. resetValidate，无参数，清空表单的验证状态，恢复初始值
  *      slots：
@@ -238,10 +239,24 @@ export default {
         isShow(val) {
             this.$emit('input', val) 
         },
-        // 当data内form发生改变，重新初始化表单绑定的值，为了让组件外可以动态改变表单绑定值
-        'data.form': {
-            handler() {
-                this.init()
+        // 当父组件传入的data内form发生改变，重新初始化表单绑定的值，为了让组件外可以动态改变表单绑定值
+        'data.form'(val) {
+            this.init()
+        },
+        // 当组件内部绑定的formData发生改变，返回change事件，方便父组件来监听表单值的变化，返回值是一个数组，根据form的索引返回绑定的值
+        'formData': {
+            handler(val) {
+                const isDataNotNull = Object.values(val).some(a => Boolean(a))
+                if(isDataNotNull) {
+                    let returnVal = []
+                    Object.entries(val).forEach(item => {
+                        const key = item[0].split('-')[1]
+                        const value = item[1]
+                        returnVal[key] = value
+                    })
+                    this.$emit('change', returnVal)
+                }
+
             },
             deep: true
         }
