@@ -56,8 +56,8 @@
                         :placeholder="form.placeholder || '请选择'"
                         :style="form.style">
                         <Option 
-                            v-for="item of form.item"
-                            :key="item.value"
+                            v-for="(item, k) of form.item"
+                            :key="`${k}-${item.value}`"
                             :value="item.value"
                             >{{item.label}}</Option>
                     </Select>
@@ -88,7 +88,7 @@
 /**
  *  component: FormExtModal 集成表单组件的modal框，支持input，select,radio以及switch。
  *  author: Alan Chen
- *  lastDate: 2018/12/18
+ *  lastDate: 2019/1/17
  *  使用：
  *      props:
  *          1. value  通过v-model来绑定一个变量来控制modal显示，默认为false
@@ -239,24 +239,24 @@ export default {
         isShow(val) {
             this.$emit('input', val) 
         },
+        // 直接监听data.form会出现监听失败的情况！
         // 当父组件传入的data内form发生改变，重新初始化表单绑定的值，为了让组件外可以动态改变表单绑定值
-        'data.form'(val) {
-            this.init()
+        'data': {
+            handler() {
+                this.init()
+            },
+            deep: true
         },
         // 当组件内部绑定的formData发生改变，返回change事件，方便父组件来监听表单值的变化，返回值是一个数组，根据form的索引返回绑定的值
         'formData': {
             handler(val) {
-                const isDataNotNull = Object.values(val).some(a => Boolean(a))
-                if(isDataNotNull) {
-                    let returnVal = []
-                    Object.entries(val).forEach(item => {
-                        const key = item[0].split('-')[1]
-                        const value = item[1]
-                        returnVal[key] = value
-                    })
-                    this.$emit('change', returnVal)
-                }
-
+                let returnVal = []
+                Object.entries(val).forEach(item => {
+                    const key = item[0].split('-')[1]
+                    const value = item[1]
+                    returnVal[key] = value
+                })
+                this.$emit('change', returnVal)
             },
             deep: true
         }
@@ -270,7 +270,8 @@ export default {
         init() {
             this.data.form.forEach((item, i) => {
                 const type = item.key
-                const defaultVal = item.default
+               // 每次初始化值，先取default，再取上次表单用户选中的值，如果都没有，则赋值为空
+                const defaultVal = item.default || this.formData[`${type}-${i}`]
                 const validator = item.validate || []
                 
                 if(type == 'select' && item.multiple) {

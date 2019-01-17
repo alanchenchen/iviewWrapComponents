@@ -14,6 +14,13 @@
 * [FullScreen](./docs/FullScreen.md)
 # Update Logs
 * *2018/12/24*
+    * 解决FormExtModal以下bug：
+        1. selcet组件中key重复导致vue警告提示
+        2. props发生改变，子组件内部监听失效，通常发生在赋值default来动态改变form子组件默认选中值
+        3. change事件当form所有绑定值为空不会触发
+        4. 当更改default值，之前用户通过交互选定的值被置空。现在会保存以前选中的值
+
+* *2018/12/24*
     1. 优化FormExtModal中default监听，去掉对象的深度监听(Vue不建议)，排除了default赋值导致循环触发watcher的问题
     2. FormExtModal新增一个emit event `change`，当表单组件值发生改变时触发
 
