@@ -13,7 +13,7 @@
 * [BreadLink](./docs/BreadLink.md)
 * [FullScreen](./docs/FullScreen.md)
 # Update Logs
-* *2018/12/24*
+* *2019/1/17*
     * 解决FormExtModal以下bug：
         1. selcet组件中key重复导致vue警告提示
         2. props发生改变，子组件内部监听失效，通常发生在赋值default来动态改变form子组件默认选中值
