@@ -88,7 +88,7 @@
 /**
  *  component: FormExtModal 集成表单组件的modal框，支持input，select,radio以及switch。
  *  author: Alan Chen
- *  lastDate: 2019/1/17
+ *  lastDate: 2019/1/121
  *  使用：
  *      props:
  *          1. value  通过v-model来绑定一个变量来控制modal显示，默认为false
@@ -271,7 +271,9 @@ export default {
             this.data.form.forEach((item, i) => {
                 const type = item.key
                // 每次初始化值，先取default，再取上次表单用户选中的值，如果都没有，则赋值为空
-                const defaultVal = item.default || this.formData[`${type}-${i}`]
+                const defaultVal = item.default == undefined
+                                 ? this.formData[`${type}-${i}`]
+                                 : item.default
                 const validator = item.validate || []
                 
                 if(type == 'select' && item.multiple) {

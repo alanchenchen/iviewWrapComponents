@@ -13,6 +13,9 @@
 * [BreadLink](./docs/BreadLink.md)
 * [FullScreen](./docs/FullScreen.md)
 # Update Logs
+* *2019/1/21*
+    1. 优化FormExtModal中default赋值bug，一旦default存在，先取default，否则取formData中已经被用于输入的绑定值
+
 * *2019/1/17*
     * 解决FormExtModal以下bug：
         1. selcet组件中key重复导致vue警告提示
