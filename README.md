@@ -13,6 +13,11 @@
 * [BreadLink](./docs/BreadLink.md)
 * [FullScreen](./docs/FullScreen.md)
 # Update Logs
+* *2019/3/25*
+    1. 优化FormExtModal中内部watch，现在只会监听prop的data中default改变，而不是每次data内被赋值就触发form表单初始化
+    2. FormExtModal新增validate、validateField和restValidateField等方法
+    3. 优化FormExtModal中default赋值bug，通过和undefined是否全等来判断default是否存在
+
 * *2019/1/21*
     1. 优化FormExtModal中default赋值bug，一旦default存在，先取default，否则取formData中已经被用于输入的绑定值
 

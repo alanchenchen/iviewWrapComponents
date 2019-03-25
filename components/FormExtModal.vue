@@ -88,7 +88,7 @@
 /**
  *  component: FormExtModal 集成表单组件的modal框，支持input，select,radio以及switch。
  *  author: Alan Chen
- *  lastDate: 2019/1/121
+ *  lastDate: 2019/3/25
  *  使用：
  *      props:
  *          1. value  通过v-model来绑定一个变量来控制modal显示，默认为false
@@ -188,7 +188,12 @@
  *          1. change,当组件内部绑定的formData(表单绑定值)发生改变触发。返回1个参数，一个数组，根据form的索引返回绑定的值
  *          2. submit,点击ok-text按钮触发。返回2个参数，params包含所有表单组件最后选中的值和表单验证的结果。done是一个回调函数，调用后关闭modal
  *      methods：
- *          1. resetValidate，无参数，清空表单的验证状态，恢复初始值
+ *          1. validate，验证整个表单。参数是一个回调函数，验证整个表单，回调函数返回一个参数status，Boolean类型，表示当前表单是否验证成功
+ *          2. validateField，只验证某一个FormItem组件。有两个参数
+ *                  参数一是prop，格式为form中key值加当前索引，例如：input-1.
+ *                  参数二是一个回调函数，验证prop对应的表单组件，回调函数返回一个参数status，Boolean类型，表示当前表单组件是否验证成功
+ *          3. resetValidate，重置整个表单验证状态。无参数，清空表单的验证状态，恢复初始值
+ *          4. restValidateField，只重置某一个FormItem组件验证状态。参数是prop，，格式为form中key值加当前索引，例如：input-1。表示
  *      slots：
  *          1. defalut，会覆盖原有的表单组件
  *          2. footer，会覆盖掉原有submit事件
@@ -231,6 +236,11 @@ export default {
             formValidator: {}
         }
     },
+    computed: {
+        formDefaultValue() {
+            return this.data.form.map(item => item.default)
+        }
+    },
     // 通过两个监听，使父子组件中的两个v-model保持同步
     watch: { 
         value(val) {
@@ -240,12 +250,9 @@ export default {
             this.$emit('input', val) 
         },
         // 直接监听data.form会出现监听失败的情况！
-        // 当父组件传入的data内form发生改变，重新初始化表单绑定的值，为了让组件外可以动态改变表单绑定值
-        'data': {
-            handler() {
-                this.init()
-            },
-            deep: true
+        // 当父组件传入的data内form数组项default值发生改变，重新初始化表单绑定的值，为了让组件外可以动态改变表单绑定值
+        'formDefaultValue'(val) {
+            this.init()
         },
         // 当组件内部绑定的formData发生改变，返回change事件，方便父组件来监听表单值的变化，返回值是一个数组，根据form的索引返回绑定的值
         'formData': {
@@ -271,7 +278,7 @@ export default {
             this.data.form.forEach((item, i) => {
                 const type = item.key
                // 每次初始化值，先取default，再取上次表单用户选中的值，如果都没有，则赋值为空
-                const defaultVal = item.default == undefined
+                const defaultVal = item.default === undefined
                                  ? this.formData[`${type}-${i}`]
                                  : item.default
                 const validator = item.validate || []
@@ -313,8 +320,18 @@ export default {
                 this.$emit('submit', returnVal, done)
             })
         },
+        validate(cb) {
+            this.$refs.form.validate(cb)
+        },
+        validateField(prop, cb) {
+            this.$refs.form.validateField(prop, cb)
+        },
         resetValidate() {
             this.$refs.form.resetFields()
+        },
+        resetValidateField(prop) {
+            const targetFormItem = this.$refs.form.fields.find(item => item.$props.prop == prop)
+            targetFormItem.resetField()
         }
     }
 }
